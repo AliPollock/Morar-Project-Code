@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">Timebooker App</string>
+    <string name="username">username</string>
+    <string name="password">password</string>
+    <string name="registerHere">Don\'t have an account? <u>Register here.</u></string>
 </resources>
