@@ -12,6 +12,8 @@ import android.widget.Toast;
 
 public class LoginActivity extends AppCompatActivity {
 
+    public static TimeBooker timeBooker;
+    public static Admin admin;
     private Button loginBtn;
     private EditText editUsername;
     private EditText editPassword;
@@ -23,8 +25,10 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         setupUIViews();
+        this.logout();
 
-
+        //inserting original admin account
+        Boolean insert = db.addOriginalAdminAccount();
 
         loginBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -36,15 +40,18 @@ public class LoginActivity extends AppCompatActivity {
                     Boolean checkUserPass = db.checkUsernamePassword(user_username, user_password);
 
                     if(checkUserPass){
-                        toastMessage("Sign in successful.");
+                        String user_type = db.getUserData(user_username, "usertype");
+                        if(user_type.equals("timeBooker")) {
+                            timeBooker = new TimeBooker(user_username, user_password);
+                        } else if (user_type.equals("admin")) {
+                            admin = new Admin(user_username, user_password);
+                        }
                         Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
                         startActivity(intent);
                     } else {
                         toastMessage("Invalid credentials.");
                     }
-                } else {
-                    toastMessage("You must put something in all of the fields!");
-                }
+                } else {}
 
             }
         });
@@ -60,7 +67,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private void setupUIViews() {
         editUsername = (EditText) findViewById(R.id.editUsername);
-        editPassword = (EditText) findViewById(R.id.editUsername);
+        editPassword = (EditText) findViewById(R.id.editPassword);
         loginBtn = (Button) findViewById(R.id.loginButton);
         registerLink = (TextView) findViewById(R.id.registerLink);
         db = new DatabaseHelper(this);
@@ -87,5 +94,10 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void register(View view) {
+    }
+
+    public void logout(){
+        TimeBooker timeBooker = null;
+        Admin admin = null;
     }
 }

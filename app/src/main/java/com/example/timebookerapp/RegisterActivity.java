@@ -52,9 +52,7 @@ public class RegisterActivity extends AppCompatActivity {
                     } else {
                         toastMessage("username already exists, please chose another one");
                     }
-                } else {
-                    toastMessage("You must put something in all of the fields!");
-                }
+                } else {}
             }
         });
 
@@ -100,9 +98,5 @@ public class RegisterActivity extends AppCompatActivity {
         Toast.makeText(this, message, Toast.LENGTH_LONG).show();
     }
 
-    public void register(View view) {
-    }
 
-    public void login(View view) {
-    }
 }
