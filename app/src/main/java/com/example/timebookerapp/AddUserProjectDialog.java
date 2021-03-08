@@ -36,7 +36,7 @@ public class AddUserProjectDialog extends AppCompatDialogFragment {
                    public void onClick(DialogInterface dialog, int which) {
                         String username = addUsername.getText().toString();
                         String project = addProject.getText().toString();
-                        listener.applyTexts(username, project);
+                        listener.applyAddTexts(username, project);
                    }
                });
 
@@ -59,6 +59,6 @@ public class AddUserProjectDialog extends AppCompatDialogFragment {
     }
 
     public interface AddUserProjectDialogListener {
-        void applyTexts(String username, String project);
+        void applyAddTexts(String username, String project);
     }
 }

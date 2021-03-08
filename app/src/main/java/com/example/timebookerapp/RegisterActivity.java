@@ -1,6 +1,5 @@
 package com.example.timebookerapp;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -41,10 +40,10 @@ public class RegisterActivity extends AppCompatActivity {
                     Boolean checkUser = db.checkUsername(user_username);
 
                     if (!checkUser) {
-                        Boolean insert = db.addData(user_username, user_email, user_password);
+                        Boolean insert = db.addUser(user_username, user_email, user_password);
                         if(insert) {
                             toastMessage("Registered successfully!");
-                            Intent intent = new Intent(RegisterActivity.this, HomeActivity.class);
+                            Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
                             startActivity(intent);
                         } else {
                             toastMessage("Registration failed");

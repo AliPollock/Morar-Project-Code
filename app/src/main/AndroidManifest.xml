@@ -9,7 +9,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.TimebookerApp">
-        <activity android:name=".UserProjectListActivity"></activity>
+        <activity android:name=".ProjectActivity"></activity>
+        <activity android:name=".UserProjectListActivity" />
         <activity android:name=".HomeActivity" />
         <activity android:name=".RegisterActivity" />
         <activity android:name=".LoginActivity" />

@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.DatabaseErrorHandler;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
@@ -23,14 +24,22 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase myDB) {
+
+//        myDB.execSQL("DROP TABLE IF EXISTS user_details");
+//        myDB.execSQL("DROP TABLE IF EXISTS project");
+//        myDB.execSQL("DROP TABLE IF EXISTS userProject");
+
         String createUserTable = "CREATE TABLE " + USER_TABLE_NAME + "(" + USERCOL1 + " TEXT PRIMARY KEY, " + USERCOL2 + " TEXT," + USERCOL3 + " TEXT, " + USERCOL4 + " TEXT)";
         myDB.execSQL(createUserTable);
 
-        String createProjectTable = "CREATE TABLE project ( "+ PROJECT_NAME + "TEXT PRIMARY KEY)";
+        String createProjectTable = "CREATE TABLE project ( "+ PROJECT_NAME + " TEXT PRIMARY KEY)";
         myDB.execSQL(createProjectTable);
 
-        String createUserProjectTable = "CREATE TABLE userProject ( username TEXT , project TEXT, PRIMARY KEY (username, project))";
+        String createUserProjectTable = "CREATE TABLE userProject ( username TEXT , project TEXT, FOREIGN KEY(username) REFERENCES user_details(username)," +
+                " FOREIGN KEY(project) REFERENCES project(projectName), PRIMARY KEY (username, project))";
         myDB.execSQL(createUserProjectTable);
+
+        myDB.execSQL("PRAGMA foreign_keys = on");
 
     }
 
@@ -40,7 +49,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         onCreate(myDB);
     }
 
-    public boolean addData(String username, String email, String password) {
+    public boolean addUser(String username, String email, String password) {
         SQLiteDatabase myDB = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put("username", username);
@@ -70,6 +79,20 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         } else {
             return true;
         }
+    }
+
+    public Boolean removeUserProject(String username, String project) {
+        SQLiteDatabase myDB = this.getWritableDatabase();
+
+        try {
+            String sqlRemove = "DELETE FROM userProject WHERE username = '" + username + "' AND project = '" + project +"'";
+            myDB.execSQL(sqlRemove);
+            return true;
+        } catch (SQLException e){
+            e.printStackTrace();
+            return false;
+        }
+
     }
 
     public Boolean checkUsername(String username) {
@@ -110,7 +133,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return result;
     }
 
-    public boolean addOriginalAdminAccount() {
+    public Boolean addOriginalAdminAccount() {
         if (!this.checkUsername("admin")) {
             SQLiteDatabase myDB = this.getWritableDatabase();
             ContentValues contentValues = new ContentValues();
@@ -124,4 +147,77 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             return false;
         }
     }
+
+    public String[] getUserProjects(String username){
+        SQLiteDatabase db = this.getWritableDatabase();
+        String query = "SELECT project FROM userProject WHERE USERNAME = '" + username + "'";
+        Cursor cursor = db.rawQuery(query, null);
+        String[] returnString = new String[cursor.getCount()];
+        int i = 0;
+
+        cursor.moveToFirst();
+        while (!cursor.isAfterLast()) {
+            returnString[i] = cursor.getString(0);
+            i++;
+            cursor.moveToNext();
+        }
+        return returnString;
+    }
+
+    public Boolean addProject(String projectName) {
+        SQLiteDatabase myDB = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("projectName", projectName);
+
+        long result = myDB.insert("project", null, contentValues);
+
+        if (result == -1) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    public Boolean deleteProject(String projectName){
+        SQLiteDatabase myDB = this.getWritableDatabase();
+
+        try {
+            String sqlRemove = "DELETE FROM project WHERE projectName = '" + projectName +"'";
+            myDB.execSQL(sqlRemove);
+            return true;
+        } catch (SQLException e){
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public Boolean changeUserType(String username) {
+        SQLiteDatabase myDB = this.getWritableDatabase();
+
+        try {
+            String sqlUpdate = "UPDATE user_details SET usertype = 'admin' WHERE username = '" + username +"'";
+            myDB.execSQL(sqlUpdate);
+            return true;
+        } catch (SQLException e){
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public String getUserType(String username) {
+        String result = "";
+        SQLiteDatabase db = this.getWritableDatabase();
+        String query = "SELECT usertype  FROM user_details WHERE USERNAME = '" + username + "'";
+        Cursor cursor = db.rawQuery(query, null);
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                do {
+                    result = cursor.getString(0);
+                } while (cursor.moveToNext());
+            }
+        }
+        return result;
+    }
+
+
 }

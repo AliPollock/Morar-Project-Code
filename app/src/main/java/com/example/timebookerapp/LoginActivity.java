@@ -24,11 +24,19 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        editUsername = (EditText) findViewById(R.id.editUsername);
+        editPassword = (EditText) findViewById(R.id.editPassword);
+        loginBtn = (Button) findViewById(R.id.loginButton);
+        registerLink = (TextView) findViewById(R.id.registerLink);
+        db = new DatabaseHelper(this);
+
         setupUIViews();
         this.logout();
 
         //inserting original admin account
         Boolean insert = db.addOriginalAdminAccount();
+
 
         loginBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -66,11 +74,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void setupUIViews() {
-        editUsername = (EditText) findViewById(R.id.editUsername);
-        editPassword = (EditText) findViewById(R.id.editPassword);
-        loginBtn = (Button) findViewById(R.id.loginButton);
-        registerLink = (TextView) findViewById(R.id.registerLink);
-        db = new DatabaseHelper(this);
+
     }
 
     private Boolean validate(){
